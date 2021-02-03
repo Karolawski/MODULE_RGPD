@@ -1,0 +1,94 @@
+#CREATE DATABASE MODULE_RGPD ;
+USE MODULE_RGPD ;
+
+
+CREATE TABLE IF NOT EXISTS PERSONNELS (
+  ID_Personnels INT NOT NULL AUTO_INCREMENT,
+  Nom VARCHAR(45) NOT NULL,
+  Prenom VARCHAR(45) NOT NULL,
+  Service VARCHAR(45) NOT NULL,
+  Telephone VARCHAR(45) NOT NULL,
+  Email VARCHAR(45) NOT NULL,
+  Actif_Inactif TINYINT NOT NULL,
+    PRIMARY KEY (ID_Personnels)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS CATEGORIES_PERSONNES_CONCERNEES (
+  ID_Categorie_Personnes_Concernees INT NOT NULL AUTO_INCREMENT,
+  Administres VARCHAR(45) NOT NULL,
+  Salaries VARCHAR(45) NOT NULL,
+  Candidats VARCHAR(45) NOT NULL,
+  Clients VARCHAR(45) NOT NULL,
+    PRIMARY KEY (ID_Categorie_Personnes_Concernees)
+)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS CATEGORIES_DONNEES (
+  ID_Categorie_Donnees INT NOT NULL AUTO_INCREMENT,
+  Categorie_Donnees VARCHAR(45) NULL,
+    PRIMARY KEY (ID_Categorie_Donnees)
+)
+ENGINE = InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS GESTION_DROIT_ACCES (
+  ID_Gestionnaire_Droit_Acces INT NOT NULL AUTO_INCREMENT,
+  ID_Personnels INT NOT NULL,
+  Actif_Inactif TINYINT NOT NULL,
+    PRIMARY KEY (ID_Gestionnaire_Droit_Acces),
+    CONSTRAINT FK_IDPersonnels_GestDroitAcces FOREIGN KEY (ID_Personnels) REFERENCES PERSONNELS (ID_Personnels) 
+  
+    )
+ENGINE = InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS SERVICES_PÔLES (
+  ID_Service INT NOT NULL AUTO_INCREMENT,
+  Nom VARCHAR(45) NOT NULL,
+  ID_Personnels INT NOT NULL,
+  Actif_Inactif TINYINT NOT NULL,
+    PRIMARY KEY (ID_Service),
+    CONSTRAINT FK_IDPersonnels_ServicesPoles FOREIGN KEY (ID_Personnels) REFERENCES PERSONNELS (ID_Personnels) 
+)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS FORMULAIRE (
+	ID_Interne INT NOT NULL AUTO_INCREMENT,
+	Nom_Logiciel_Traitement VARCHAR(255) NOT NULL,
+	ID_Declaration INT NOT NULL,
+	Date_Declaration DATETIME NOT NULL,
+	Date_Creation DATETIME NOT NULL,
+	Description_Traitement TEXT(400) NULL,
+	ID_Responsable_Traitement INT NOT NULL,
+	ID_COResponsable_Traitement INT NULL,
+	ID_Représentant_COResponsable_traitement INT NULL,
+	Finalites_Traitement TEXT(200) NULL,
+	Sous_Finalite TEXT(200) NULL,
+	Commentaire TEXT(400) NULL,
+	Date_MEO DATETIME NOT NULL,
+	ID_Service_Charge_MEO INT NOT NULL COMMENT 'personnels ou exterieur ?\n Acteur / Service chargé de la mise en œuvre',
+	ID_Gestionnaire_Droit_Acces INT NOT NULL,
+	ID_Categorie_Donnees INT NOT NULL,
+	ID_Categorie_Personnes_Concernees INT NOT NULL,
+	Destinataire VARCHAR(45) NULL COMMENT '\n',
+	Duree_Utilite_Administrative DATE NOT NULL COMMENT 'nbre jours ?\n nbre années ?',
+	Formalite_Prealable VARCHAR(45) NULL,
+	Transferts_Hors_UE TINYINT NOT NULL COMMENT 'boolean',
+	Donnees_Sensibles TINYINT NOT NULL COMMENT 'bolean',
+	Sous_Traitant VARCHAR(45) NULL,
+	Delai_Effacement DATE NOT NULL COMMENT 'time ? quelle durée max  ?\n',
+	Derniere_MAJ DATETIME NOT NULL,
+    PRIMARY KEY (ID_Interne, ID_Declaration),
+	  CONSTRAINT FK_IDCatPersonnesConcernees_Formulaire FOREIGN KEY (ID_Categorie_Personnes_Concernees) REFERENCES CATEGORIES_PERSONNES_CONCERNEES(ID_Categorie_Personnes_Concernees),
+	  CONSTRAINT FK_IDCatDonnees_Formulmaire FOREIGN KEY (ID_Categorie_Donnees) REFERENCES CATEGORIES_DONNEES(ID_Categorie_Donnees),
+    CONSTRAINT FK_IDGestDroitAcces_Formulaire FOREIGN KEY (ID_Gestionnaire_Droit_Acces) REFERENCES GESTION_DROIT_ACCES(ID_Gestionnaire_Droit_Acces)
+)
+ENGINE = InnoDB;
+
+
+
+
+
+
+
